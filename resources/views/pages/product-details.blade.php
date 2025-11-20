@@ -1,19 +1,31 @@
-@extends('layouts.app')
+@extends('frontend.app')
 @section('title', $product['name'])
 
 @section('content')
 
 <div class="container mt-5">
 
-    <!-- Success Message -->
-    <div id="cartMessage" class="alert alert-dismissible fade show text-center d-none" role="alert">
-        <button type="button" class="btn-close" aria-label="Close" onclick="closeCartMessage()"></button>
+    <!-- Center Modal -->
+    <div id="cartModal" 
+         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); 
+                justify-content:center; align-items:center; z-index:9999;">
+        <div style="background:white; padding:20px; border-radius:10px; text-align:center; max-width:350px; width:90%; box-shadow:0 5px 15px rgba(0,0,0,0.3);">
+            <p>Added to cart Successfully!</p>
+            <img id="cartModalImg" src="" alt="Product Image" style="max-width:150px; margin-bottom:15px;">
+            <h5 id="cartModalName" class="fw-bold mb-2"></h5>
+            <p id="cartModalPrice" class="mb-3"></p>
+            <div class="d-flex justify-content-center gap-2">
+                <a href="{{ route('cart') }}" class="btn btn-cart">View Cart</a>
+                <button id="cartModalOk" class="btn btn-outline-dark">OK</button>
+            </div>
+        </div>
     </div>
 
     <div class="row align-items-center">
         <!-- Product image -->
         <div class="col-md-6 text-center mb-4 mb-md-0">
-            <img src="{{ asset('images/'.$product['img'].'.jpg') }}" class="img-fluid rounded shadow-sm" alt="{{ $product['name'] }}">
+            <img src="{{ $product['img'] ? asset('storage/' . $product['img']) : asset('images/default.jpg') }}" 
+                 class="img-fluid rounded shadow-sm" alt="{{ $product['name'] }}">
         </div>
 
         <!-- Product details -->
@@ -40,13 +52,13 @@
             <!-- Reviews -->
             <h5 class="fw-bold mt-3">Customer Reviews</h5>
             <p>
-            <i class="bi bi-star-fill text-warning"></i>
-    <i class="bi bi-star-fill text-warning"></i>
-    <i class="bi bi-star-fill text-warning"></i>
-    <i class="bi bi-star-fill text-warning"></i>
-    <i class="bi bi-star text-warning"></i>
-    (4.0/5)
-</p>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star text-warning"></i>
+                (4.0/5)
+            </p>
             <blockquote class="text-muted fst-italic">“Excellent product! Will buy again.”</blockquote>
 
             <!-- Review form -->
@@ -62,48 +74,52 @@
 
 @section('scripts')
 <script>
-// Quantity
+// Quantity control
 const qtyInput = document.getElementById('quantity');
 document.getElementById('increaseQty').addEventListener('click', () => qtyInput.value++);
 document.getElementById('decreaseQty').addEventListener('click', () => {
     if (qtyInput.value > 1) qtyInput.value--;
 });
 
-// Add to cart
+// Add to cart + show modal
 document.getElementById('addToCartBtn').addEventListener('click', () => {
-    const name = "{{ strtolower($product['name']) }}";
+    const name = "{{ $product['name'] }}";
     const price = {{ $product['price'] }};
-    const category = "{{ $product['category'] }}";
-    const img = "{{ asset('images/'.$product['img'].'.jpg') }}";
+    const img = "{{ $product['img'] ? asset('storage/' . $product['img']) : asset('images/default.jpg') }}";
     const qty = parseInt(qtyInput.value);
 
+    // Update localStorage cart
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     const existing = cart.find(item => item.name === name);
 
     if (existing) {
         existing.qty += qty;
     } else {
-        cart.push({ name, price, qty, category, img });
+        cart.push({ name, price, qty, img });
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
-    showCartMessage();
+
+    // Show modal
+    const modal = document.getElementById('cartModal');
+    document.getElementById('cartModalImg').src = img;
+    document.getElementById('cartModalName').textContent = name;
+    document.getElementById('cartModalPrice').textContent = 'Rs. ' + price;
+    modal.style.display = 'flex';
 });
 
-// Show success message with View Cart button
-function showCartMessage() {
-    const msg = document.getElementById('cartMessage');
-    msg.innerHTML = `
-        <i class="bi bi-check-circle-fill text-success"></i> Item added to cart!
-<a href="{{ route('cart') }}" class="btn btn-sm btn-view-cart ms-2">View Cart</a>
-    `;
-    msg.classList.remove('d-none');
-}
+// Close modal
+document.getElementById('cartModalOk').addEventListener('click', () => {
+    document.getElementById('cartModal').style.display = 'none';
+});
 
-// Close message manually
-function closeCartMessage() {
-    document.getElementById('cartMessage').classList.add('d-none');
+// Update cart badge
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const total = cart.reduce((sum, item) => sum + item.qty, 0);
+    const badge = document.getElementById('cart-count');
+    if (badge) badge.textContent = total;
 }
 </script>
 @endsection

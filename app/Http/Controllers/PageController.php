@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -12,35 +13,42 @@ class PageController extends Controller
     }
 
     // Products Page
-    public function products() {
-        $products = [
-            1 => ['id'=>1, 'name'=>'Hair Oil', 'img'=>'hairoil', 'price'=>2000, 'category'=>'haircare', 'desc'=>'Natural nourishment for shiny hair'],
-            2 => ['id'=>2, 'name'=>'Lipstick', 'img'=>'lipstick', 'price'=>1500, 'category'=>'makeup', 'desc'=>'Long-lasting lipstick'],
-            3 => ['id'=>3, 'name'=>'Blush', 'img'=>'blush', 'price'=>1800, 'category'=>'makeup', 'desc'=>'Gives a natural glow'],
-            4 => ['id'=>4, 'name'=>'Sunscreen', 'img'=>'sunscreen', 'price'=>2200, 'category'=>'skincare', 'desc'=>'Protects your skin from UV rays'],
-            5 => ['id'=>5, 'name'=>'Nail Polish', 'img'=>'nailpaint', 'price'=>1300, 'category'=>'nail', 'desc'=>'Bright colors for nails'],
-            6 => ['id'=>6, 'name'=>'Cosmetic Kit', 'img'=>'cosmetics', 'price'=>3500, 'category'=>'makeup', 'desc'=>'Complete kit for makeup lovers'],
-        ];
+    public function products(Request $request) {
 
-        return view('pages.products', compact('products'));
+        // Start query
+        $query = Product::query();
+
+        // Search
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Category filter
+        if ($request->filled('category') && $request->category != 'all') {
+            $query->where('category', $request->category);
+        }
+
+        // Sort by price
+        if ($request->filled('sort')) {
+            if ($request->sort == 'low-high') $query->orderBy('price', 'asc');
+            if ($request->sort == 'high-low') $query->orderBy('price', 'desc');
+        } else {
+            $query->orderBy('id', 'desc'); // default order
+        }
+
+        // Pagination
+        $products = $query->paginate(9)->withQueryString();
+
+        // Distinct categories for filter dropdown
+        $categories = Product::select('category')->distinct()->pluck('category');
+
+        return view('pages.products', compact('products', 'categories'));
     }
 
     // Product Details
     public function details($id)
     {
-        $products = [
-            1 => ['id'=>1, 'name'=>'Hair Oil', 'img'=>'hairoil', 'price'=>2000, 'category'=>'haircare', 'desc'=>'Natural nourishment for shiny hair'],
-            2 => ['id'=>2, 'name'=>'Lipstick', 'img'=>'lipstick', 'price'=>1500, 'category'=>'makeup', 'desc'=>'Long-lasting lipstick'],
-            3 => ['id'=>3, 'name'=>'Blush', 'img'=>'blush', 'price'=>1800, 'category'=>'makeup', 'desc'=>'Gives a natural glow'],
-            4 => ['id'=>4, 'name'=>'Sunscreen', 'img'=>'sunscreen', 'price'=>2200, 'category'=>'skincare', 'desc'=>'Protects your skin from UV rays'],
-            5 => ['id'=>5, 'name'=>'Nail Polish', 'img'=>'nailpaint', 'price'=>1300, 'category'=>'nail', 'desc'=>'Bright colors for nails'],
-            6 => ['id'=>6, 'name'=>'Cosmetic Kit', 'img'=>'cosmetics', 'price'=>3500, 'category'=>'makeup', 'desc'=>'Complete kit for makeup lovers'],
-        ];
-
-        if (!isset($products[$id])) abort(404);
-
-        $product = $products[$id];
-
+        $product = Product::findOrFail($id);
         return view('pages.product-details', compact('product'));
     }
 

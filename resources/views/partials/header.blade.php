@@ -19,8 +19,8 @@
                         Login / Register
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
-                        <li><a class="dropdown-item" href="/login">Login</a></li>
-                        <li><a class="dropdown-item" href="/register">Register</a></li>
+                        <li><a class="dropdown-item" href="/userlogin">Login</a></li>
+                        <li><a class="dropdown-item" href="/userregister">Register</a></li>
                     </ul>
                 </li>
                 <li class="nav-item ms-3">

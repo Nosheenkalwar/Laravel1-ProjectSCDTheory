@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('frontend.app')
 
 @section('title', 'Services')
 
@@ -229,6 +229,6 @@
         msg.style.display = anyVisible ? 'none' : 'block';
     }
 </script>
-<!-- JavaScript Ends -->
+
 
 @endsection
