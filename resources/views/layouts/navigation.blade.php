@@ -19,6 +19,15 @@
                      <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.*')">
                         {{ __('Products') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('admin.services.index')" :active="request()->routeIs('admin.services.*')">
+                        {{ __('Services') }}
+                    </x-nav-link>
+                     <x-nav-link :href="route('admin.appointments.index')" :active="request()->routeIs('admin.appointments.*')">
+    {{ __('Appointments') }}
+</x-nav-link>
+
+
                 </div>
             </div>
 
@@ -78,6 +87,13 @@
             <x-responsive-nav-link :href="route('admin.products.index')" :active="request()->routeIs('products.*')">
         {{ __('Products') }}
     </x-responsive-nav-link>
+
+    <x-responsive-nav-link :href="route('admin.services.index')" :active="request()->routeIs('services.*')">
+        {{ __('Services') }}
+    </x-responsive-nav-link>
+   <x-responsive-nav-link :href="route('admin.appointments.index')" :active="request()->routeIs('admin.appointments*')">
+    {{ __('Appointments') }}
+</x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->

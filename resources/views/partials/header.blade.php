@@ -23,6 +23,16 @@
                         <li><a class="dropdown-item" href="/userregister">Register</a></li>
                     </ul>
                 </li>
+                <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="historyDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        History
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="historyDropdown">
+        <li><a class="dropdown-item" href="/orders">Orders</a></li>
+        <li><a class="dropdown-item" href="/appointments">Appointments</a></li>
+    </ul>
+</li>
+
                 <li class="nav-item ms-3">
 <!--Cart icon and button in header with count badge-->
                     <a class="nav-link position-relative" href="{{ route('cart') }}">

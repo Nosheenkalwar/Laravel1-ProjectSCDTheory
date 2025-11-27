@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Service;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -64,9 +65,16 @@ class PageController extends Controller
 
     // Other Pages
     public function about() { return view('pages.about'); }
-    public function services() { return view('pages.services'); }
+   // **Services Page**
+    public function services() {
+        $services = Service::all(); // Fetch all services from DB
+        return view('pages.services', compact('services'));
+    }
+
     public function contact() { return view('pages.contact'); }
     public function login() { return view('pages.login'); }
     public function register() { return view('pages.register'); }
     public function thankyou() { return view('pages.thankyou'); }
+    public function orders() { return view('pages.orders'); }
+    public function appointments() { return view('pages.appointments'); }
 }

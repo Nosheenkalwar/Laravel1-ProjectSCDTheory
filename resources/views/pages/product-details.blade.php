@@ -31,7 +31,7 @@
         <!-- Product details -->
         <div class="col-md-6">
             <h3 class="fw-bold mb-2">{{ $product['name'] }}</h3>
-            <p class="text-muted">{{ $product['desc'] }}</p>
+            <p class="text-muted">{{ $product['description'] }}</p>
             <p class="fw-bold fs-5 mb-3">Rs. {{ $product['price'] }}</p>
 
             <!-- Quantity -->
